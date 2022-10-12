@@ -22,7 +22,6 @@ def add_values_to_queue(name, *args):
     received.put((0, args[0]))  # add degree to Queue as int
     received.put((1, args[1]))  # add velocity to Queue as int
     received.put((2, args[2]))  # add chord to Queue as string
-    print(args)
 
 
 ################ all function mappings made here #############
@@ -111,9 +110,6 @@ def degreeToModifier(degree):
 
 
 if __name__ == "__main__":
-    # sock = socket.socket(socket.AF_INET,     # Internet
-    #                      socket.SOCK_DGRAM)  # UDP
-    # sock.bind((UDP_IP, UDP_PORT))
     print("running")
 
     ROBOT = "xArms"
