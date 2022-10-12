@@ -45,14 +45,20 @@ def get_velocity_range(velocity):
         return "fast"
 
 ############# define server to be running in background ####################
+
+
 def server():
     server = osc_server.ThreadingOSCUDPServer((UDP_IP, UDP_PORT), dispatcher)
     print("Serving on {}".format(server.server_address))
     server.serve_forever()
     atexit.register(server.server_close())
-threading.Thread(target=server, daemon=True).start() 
-client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT) #client to send to other functions
+
+
+threading.Thread(target=server, daemon=True).start()
+# client to send to other functions
+client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT)
 #############################################################################
+
 
 def setup():
     for a in arms:
@@ -100,6 +106,10 @@ def moveToStart(a):
                       is_radian=True)
 
 
+def degreeToModifier(degree):
+    return (degree - 1) * 0.4
+
+
 if __name__ == "__main__":
     # sock = socket.socket(socket.AF_INET,     # Internet
     #                      socket.SOCK_DGRAM)  # UDP
@@ -111,7 +121,7 @@ if __name__ == "__main__":
 
     from xarm.wrapper import XArmAPI
 
-    # arm0 = XArmAPI('192.168.1.237')
+    arm0 = XArmAPI('192.168.1.237')
     # arm1 = XArmAPI('192.168.1.208')
     # arm2 = XArmAPI('192.168.1.244')
     # arm3 = XArmAPI('192.168.1.203')
@@ -136,6 +146,7 @@ if __name__ == "__main__":
 
         if instruction == 0:
             print("degree:" + str(value))
+            rotate(arm0, degreeToModifier)
         elif instruction == 1:
             print("velocity:" + str(value))
             print("range:" + str(get_velocity_range(value)))
