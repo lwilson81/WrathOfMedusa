@@ -18,20 +18,16 @@ received = queue.Queue()
 ############## functions to be mapped using dispatcher ################
 
 
-def print_data(name, *args):
-    # receive.put(args[0])
-    print(args)
-
-
 def add_values_to_queue(name, *args):
     received.put((0, args[0]))  # add degree to Queue as int
     received.put((1, args[1]))  # add velocity to Queue as int
     received.put((2, args[2]))  # add chord to Queue as string
+    print(args)
 
 
 ################ all function mappings made here #############
 dispatcher = dispatcher.Dispatcher()  # dispatcher to send
-dispatcher.map("", add_values_to_queue)
+dispatcher.map("/toPython", add_values_to_queue)
 ##############################################################
 
 #velocity in max is [0, 127]
@@ -48,6 +44,15 @@ def get_velocity_range(velocity):
     else:
         return "fast"
 
+############# define server to be running in background ####################
+def server():
+    server = osc_server.ThreadingOSCUDPServer((UDP_IP, UDP_PORT), dispatcher)
+    print("Serving on {}".format(server.server_address))
+    server.serve_forever()
+    atexit.register(server.server_close())
+threading.Thread(target=server, daemon=True).start() 
+client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT) #client to send to other functions
+#############################################################################
 
 def setup():
     for a in arms:
@@ -96,9 +101,9 @@ def moveToStart(a):
 
 
 if __name__ == "__main__":
-    sock = socket.socket(socket.AF_INET,     # Internet
-                         socket.SOCK_DGRAM)  # UDP
-    sock.bind((UDP_IP, UDP_PORT))
+    # sock = socket.socket(socket.AF_INET,     # Internet
+    #                      socket.SOCK_DGRAM)  # UDP
+    # sock.bind((UDP_IP, UDP_PORT))
     print("running")
 
     ROBOT = "xArms"
