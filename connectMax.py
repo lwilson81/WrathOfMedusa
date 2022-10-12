@@ -109,6 +109,11 @@ def degreeToModifier(degree):
     return (degree - 1) * 0.4
 
 
+def playString(chord):
+    if chord == "E":
+        print("E")
+
+
 if __name__ == "__main__":
     print("running")
 
@@ -148,6 +153,7 @@ if __name__ == "__main__":
             print("range:" + str(get_velocity_range(value)))
         elif instruction == 2:
             print("chord:" + str(value))
+            playString(value)
 
         # dictionary mappings from value to movement
 
