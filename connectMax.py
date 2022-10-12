@@ -19,24 +19,16 @@ def print_data(name, *args):
     print(args)
 
 
-def add_degree_to_queue(name, *args):
-    received.put((0, args[0]))  # add to Queue
+def add_values_to_queue(name, *args):
+    received.put((0, args[0]))  # add degree to Queue as int
+    received.put((1, args[1]))  # add velocity to Queue as int
+    received.put((2, args[2]))  # add chord to Queue as string
 
-
-def add_velocity_to_queue(name, *args):
-    received.put((1, args[0])) # add to Queue
-
-
-def add_chord_to_queue(name, *args):
-    received.put((2, args[0])) # add to Queue
 
 
 ################ all function mappings made here #############
 dispatcher = dispatcher.Dispatcher()   #dispatcher to send 
-dispatcher.map("/print_data", print_data)
-dispatcher.map("/degree", add_degree_to_queue)
-dispatcher.map("/velocity", add_velocity_to_queue)
-dispatcher.map("/chord", add_chord_to_queue)
+dispatcher.map("", add_values_to_queue)
 ##############################################################
 
 #velocity in max is [0, 127]
