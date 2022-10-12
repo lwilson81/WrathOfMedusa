@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
         if instruction == 0:
             print("degree:" + str(value))
-            rotate(arm0, degreeToModifier)
+            rotate(arm0, degreeToModifier(value))
         elif instruction == 1:
             print("velocity:" + str(value))
             print("range:" + str(get_velocity_range(value)))
