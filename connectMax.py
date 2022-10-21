@@ -69,15 +69,15 @@ if __name__ == "__main__":
             degree = value
             # rotateRandomly(value)
 
-        elif instruction == 1:
+        elif instruction == 1: # velocity instruction is 1
             print("velocity:" + str(value))
             print("range:" + str(getVelocityRange(value)))
 
-        elif instruction == 2:
+        elif instruction == 2: # chord instruction is 2
             print("chord:" + str(value))
-            if value.contains("E"):
+            if value.contains("E"): #only for 1 robot (E string)
                 print("strumming!")
                 strum()
-            else:
+            else: # dance otherwise
                 moveToStart(0)
                 rotateRandomly(degree)
