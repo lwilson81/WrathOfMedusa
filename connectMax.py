@@ -47,6 +47,11 @@ threading.Thread(target=server, daemon=True).start()
 client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT)
 
 
+def playString(chord):
+    if chord == "E":
+        print("E")
+
+
 if __name__ == "__main__":
     setup()
 
