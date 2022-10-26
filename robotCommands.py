@@ -1,6 +1,8 @@
 import time
 import numpy as np
 
+from xarm import XArmAPI
+
 global IP
 global arms
 global strumD
@@ -18,8 +20,8 @@ IP1 = [2.1, 86.3, 0, 127.1, -strumD/2, 50.1, -45]
 IP2 = [1.5, 81.6, 0.0, 120, -strumD/2, 54.2, -45]
 IP3 = [2.5, 81, 0, 117.7, -strumD/2, 50.5, -45]
 IP4 = [-1.6, 81.8, 0, 120, -strumD/2, 50.65, -45]
-IP = [IP0, IP1, IP2, IP3, IP4]
-
+#IP = [IP0, IP1, IP2, IP3, IP4]
+IP = [IP4, IP1, IP2, IP3, IP4] # for testing
 
 def fifth_poly(q_i, q_f, t):
     # time/0.005
@@ -42,9 +44,9 @@ def fifth_poly(q_i, q_f, t):
     return traj_pos
 
 
-uptraj = fifth_poly(-strumD/2, strumD/2, speed)
-downtraj = fifth_poly(strumD/2, -strumD/2, speed)
-trajQueue = [uptraj, downtraj]
+# uptraj = fifth_poly(-strumD/2, strumD/2, speed)
+# downtraj = fifth_poly(strumD/2, -strumD/2, speed)
+# trajQueue = [uptraj, downtraj]
 
 # arm1 = XArmAPI('192.168.1.208')
 # arm2 = XArmAPI('192.168.1.244')
@@ -54,11 +56,11 @@ trajQueue = [uptraj, downtraj]
 # arm6 = XArmAPI('192.168.1.242')
 # arm7 = XArmAPI('192.168.1.215')
 # arm8 = XArmAPI('192.168.1.234')
-# arm9 = XArmAPI('192.168.1.237')
+arm9 = XArmAPI('192.168.1.237')
 # arm10 = XArmAPI('192.168.1.204')
 
 # arms = [arm9]
-arms = []
+arms = [arm9]
 
 
 def setup():
@@ -75,6 +77,7 @@ def setup():
 
 
 def moveToStart(index):
+    print(index)
     arms[index].set_servo_angle(angle=[0.0, 0.0, 0.0, 1.57, 0.0, 0, 0.0], wait=False, speed=0.4, acceleration=0.25,
                                 is_radian=True)
 
@@ -93,6 +96,7 @@ def strumbot(numarm, traj):
         # run command
         start_time = time.time()
         j_angles[4] = traj[i]
+        print(j_angles)
         arms[numarm].set_servo_angle_j(angles=j_angles, is_radian=False)
 
         while track_time < initial_time + 0.004:
@@ -102,10 +106,12 @@ def strumbot(numarm, traj):
 
 
 def strum():
-    curr = trajQueue.pop(0)
-    strumbot(0, curr)
-    trajQueue.append(curr)
-
+    print("strummed")
+    downtraj = fifth_poly(strumD / 2, -strumD / 2, speed)
+    # moveToStrumPos(0)
+    arms[0].set_mode(1)
+    arms[0].set_state(0)
+    strumbot(0, downtraj)
 
 def getArms():
     return arms

@@ -22,7 +22,7 @@ def rotateRandomly(chordDegree):
 
 
 def rotateRandomly(chordDegree):
-
+    print("rotated randomly")
     arms = getArms()
     IP = getIPs()
     modifier = chordDegreeToModifer(chordDegree)

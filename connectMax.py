@@ -9,8 +9,8 @@ import queue
 from mappings import getVelocityRange, rotateRandomly
 from robotCommands import moveToStart, setup, strum
 
-UDP_IP = "127.0.0.1"  # local IP
-# UDP_IP = "0.0.0.0" # hivemind IP
+# UDP_IP = "127.0.0.1"  # local IP
+UDP_IP = "0.0.0.0" # hivemind IP
 UDP_PORT = 3500  # port to retrieve data from Max
 
 # make Queue -> .get() will call print_data -> .put() will put data into Queue
@@ -23,6 +23,7 @@ received = queue.Queue()
 
 
 def add_values_to_queue(name, *args):
+    print("added to queue")
     received.put((0, args[0]))  # add degree to Queue as int
     received.put((1, args[1]))  # add velocity to Queue as int
     received.put((2, args[2]))  # add chord to Queue as string
@@ -61,7 +62,7 @@ if __name__ == "__main__":
     ############ functions to do things to data ##########################
     while True:
         instruction, value = received.get()  # get instruction and val from Queue
-
+        print(instruction)
         degree = 1
 
         if instruction == 0:
@@ -75,7 +76,7 @@ if __name__ == "__main__":
 
         elif instruction == 2: # chord instruction is 2
             print("chord:" + str(value))
-            if value.contains("E"): #only for 1 robot (E string)
+            if value == "E": #only for 1 robot (E string)
                 print("strumming!")
                 strum()
             else: # dance otherwise
