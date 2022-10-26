@@ -7,10 +7,10 @@ from pythonosc import osc_server
 import queue
 
 from mappings import getVelocityRange, rotateRandomly
-from robotCommands import moveToStart, setup, strum
+from robotCommands import moveToStart, playPattern, setup, strum
 
 # UDP_IP = "127.0.0.1"  # local IP
-UDP_IP = "0.0.0.0" # hivemind IP
+UDP_IP = "0.0.0.0"  # hivemind IP
 UDP_PORT = 3500  # port to retrieve data from Max
 
 # make Queue -> .get() will call print_data -> .put() will put data into Queue
@@ -70,15 +70,16 @@ if __name__ == "__main__":
             degree = value
             # rotateRandomly(value)
 
-        elif instruction == 1: # velocity instruction is 1
+        elif instruction == 1:  # velocity instruction is 1
             print("velocity:" + str(value))
             print("range:" + str(getVelocityRange(value)))
 
-        elif instruction == 2: # chord instruction is 2
-            print("chord:" + str(value))
-            if value == "E": #only for 1 robot (E string)
-                print("strumming!")
-                strum()
-            else: # dance otherwise
-                moveToStart(0)
-                rotateRandomly(degree)
+        elif instruction == 2:  # chord instruction is 2
+            playPattern()
+            # print("chord:" + str(value))
+            # if value == "E": #only for 1 robot (E string)
+            #     print("strumming!")
+            #     strum()
+            # else: # dance otherwise
+            #     moveToStart(0)
+            #     rotateRandomly(degree)
