@@ -8,7 +8,7 @@ global arms
 global strumD
 global speed
 global notes
-
+trajValue = False
 ROBOT = "xArms"
 PORT = 5003
 
@@ -96,7 +96,6 @@ def strumbot(numarm, traj):
         # run command
         start_time = time.time()
         j_angles[4] = traj[i]
-        print(j_angles)
         arms[numarm].set_servo_angle_j(angles=j_angles, is_radian=False)
 
         while track_time < initial_time + 0.004:
@@ -105,13 +104,20 @@ def strumbot(numarm, traj):
         initial_time += 0.004
 
 
+
 def strum():
+    global trajValue
     print("strummed")
-    downtraj = fifth_poly(strumD / 2, -strumD / 2, speed)
-    # moveToStrumPos(0)
+    uptraj = fifth_poly(-strumD / 2, strumD / 2, speed)
+    downtraj = fifth_poly(strumD/2, -strumD/2, speed)
+    trajQueue = [uptraj, downtraj]
+
+        # moveToStrumPos(0)
     arms[0].set_mode(1)
     arms[0].set_state(0)
-    strumbot(0, downtraj)
+    strumbot(0, trajQueue[int(trajValue)])
+    trajValue = not trajValue
+    # arms[0].set_servo_angle(angle=[-1.6, 81.8, 0, 120, 20, 50.65, -45],  is_radian=False, wait=False, speed=10, acceleration=0.25)
 
 def getArms():
     return arms
