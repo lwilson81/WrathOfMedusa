@@ -83,7 +83,7 @@ def moveToStart(index):
 
 
 def moveToStrumPos(index):
-    arms[index].set_servo_angle(angle=IP[index], wait=False, speed=0.4, acceleration=0.25,
+    arms[index].set_servo_angle(angle=IP[index], wait=True, speed=0.4, acceleration=0.25,
                                 is_radian=True)
 
 
@@ -112,7 +112,7 @@ def strum():
     downtraj = fifth_poly(strumD/2, -strumD/2, speed)
     trajQueue = [uptraj, downtraj]
 
-        # moveToStrumPos(0)
+    moveToStrumPos(0)
     arms[0].set_mode(1)
     arms[0].set_state(0)
     strumbot(0, trajQueue[int(trajValue)])
