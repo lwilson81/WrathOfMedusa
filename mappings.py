@@ -11,7 +11,7 @@ def rotateRandomly(chordDegree):
     arm.set_mode(0)
     arm.set_state(0)
     home = [0.0, 0.0, 0.0, 1.57, 0.0, 0.0, 0.0]
-
+    
     modifier = chordDegreeToModifer(chordDegree)
 
     # TODO: replace with numpy and broadcasting for optimization

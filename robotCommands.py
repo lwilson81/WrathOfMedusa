@@ -13,7 +13,7 @@ def setup():
         # a.motion_enable(enable=True)
         arms[i].clean_warn()
         arms[i].clean_error()
-        arms[i].set_mode(1)
+        arms[i].set_mode(0)
         arms[i].set_state(0)
         arms[i].set_servo_angle(angle=IP[i], wait=False,
                                 speed=10, acceleration=0.25, is_radian=False)
@@ -57,20 +57,13 @@ def strummer(queue, robotNum):
 
     while True:
         queue.get()
+        arms[i].set_mode(1)
+        arms[i].set_state(1)
         print("Strum Command Recieved for Robot " + str(robotNum))
 
-<<<<<<< HEAD
         strumDirection = i % 2
         time.sleep(delayarray[strumDirection, robotNum])
         strumbot(robotNum, strumTrajectories[strumDirection])
-=======
-    moveToStrumPos(0)
-    arms[0].set_mode(1)
-    arms[0].set_state(0)
-    strumbot(0, trajQueue[int(trajValue)])
-    trajValue = not trajValue
-    # arms[0].set_servo_angle(angle=[-1.6, 81.8, 0, 120, 20, 50.65, -45],  is_radian=False, wait=False, speed=10, acceleration=0.25)
->>>>>>> 94a4973dcd2cd387fc310a7ba9622c2be1978a3b
 
         i += 1
 
