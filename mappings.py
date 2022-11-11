@@ -50,3 +50,6 @@ def getVelocityRange(velocity):
         return "medium"
     else:
         return "fast"
+
+
+

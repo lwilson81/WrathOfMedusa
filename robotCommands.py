@@ -10,25 +10,26 @@ from trajectoryGen import fifth_poly
 def setup():
     for i in range(len(arms)):
         arms[i].set_simulation_robot(on_off=False)
-        # a.motion_enable(enable=True)
+        arms[i].motion_enable(enable=True)
         arms[i].clean_warn()
         arms[i].clean_error()
-        arms[i].set_mode(1)
+        arms[i].set_mode(0)
         arms[i].set_state(0)
         arms[i].set_servo_angle(angle=IP[i], wait=False,
                                 speed=10, acceleration=0.25, is_radian=False)
+        arms[i].set_mode(1)
+        arms[i].set_state(0)
     print("Ready to start.")
 
 
 # Start Positions (not Live mode)
 def moveToStart(index):
-    print(index)
     arms[index].set_servo_angle(angle=[0.0, 0.0, 0.0, 1.57, 0.0, 0, 0.0], wait=False, speed=0.4, acceleration=0.25,
                                 is_radian=True)
 
 
 def moveToStrumPos(index):
-    arms[index].set_servo_angle(angle=IP[index], wait=True, speed=0.4, acceleration=0.25,
+    arms[index].set_servo_angle(angle=IP[index], wait=False, speed=0.4, acceleration=0.25,
                                 is_radian=True)
 
 
@@ -56,31 +57,48 @@ def strummer(queue, robotNum):
     strumTrajectories = [upStrumTraj, downStrumTraj]
 
     while True:
-        queue.get()
+        variation = queue.get()
         print("Strum Command Recieved for Robot " + str(robotNum))
 
-<<<<<<< HEAD
         strumDirection = i % 2
-        time.sleep(delayarray[strumDirection, robotNum])
-        strumbot(robotNum, strumTrajectories[strumDirection])
-=======
-    moveToStrumPos(0)
-    arms[0].set_mode(1)
-    arms[0].set_state(0)
-    strumbot(0, trajQueue[int(trajValue)])
-    trajValue = not trajValue
-    # arms[0].set_servo_angle(angle=[-1.6, 81.8, 0, 120, 20, 50.65, -45],  is_radian=False, wait=False, speed=10, acceleration=0.25)
->>>>>>> 94a4973dcd2cd387fc310a7ba9622c2be1978a3b
+
+        while mode == 0:
+            time.sleep(delayArray[variation][strumDirection, robotNum])
+            strumbot(robotNum, strumTrajectories[strumDirection])
+
+        while mode == 1 and queue.empty():
+            time.sleep(delayArray[variation][strumDirection, robotNum])
+            strumbot(robotNum, strumTrajectories[strumDirection])
 
         i += 1
 
 
-def playPattern():
-    q0.put(0)
-    # q1.put(1)
-    # q2.put(2)
-    # q3.put(3)
-    # q4.put(4)
+def playPattern(chord):
+    # TODO: Use dictionary instead
+    if 'C7' in chord:
+        print("Special C recognized")
+        mode = 1
+        loadQueues([1, 3, 4], 'C')
+
+    elif 'C' in chord:
+        print("C recognized")
+        mode = 0
+        loadQueues([1, 3, 4], 'C')
+
+    elif 'F' in chord:
+        print("F recognized")
+        mode = 0
+        loadQueues([1, 2, 3], 'C')
+
+    elif 'G' in chord:
+        print("G recognized")
+        mode = 0
+        loadQueues([2, 3, 4], 'C')
+
+
+def loadQueues(indexes, input):
+    for i in indexes:
+        qList[i].put(input)
 
 
 # Accessors
@@ -130,6 +148,40 @@ xArm2 = Thread(target=strummer, args=(q2, 2,))  # num 1
 xArm3 = Thread(target=strummer, args=(q3, 3,))  # num 3
 xArm4 = Thread(target=strummer, args=(q4, 4,))  # num 5
 
+
+def startThreads():
+    xArm0.start()
+    xArm1.start()
+    xArm2.start()
+    xArm3.start()
+    xArm4.start()
+
+
+# Mode to determine the multiplicity of arpeggios
+mode = 0
+
 # Time delay before playing
-delayarray = np.array([[0.15, 0.15, 0.15, 0.15, 0.15, 0.0, 0.0], [
-                      0.1, 0.15, 0.1, 0.15, 0.125, 0.0, 0.0]])
+defaultDelayArray = np.array([[0.15, 0.15, 0.15, 0.15, 0.15, 0.0, 0.0], [
+    0.1, 0.15, 0.1, 0.15, 0.125, 0.0, 0.0]])
+
+# INDEX TO ROBOT MAPPING
+# 0 => 1
+# 1 => 3
+# 2 => 0
+# 3 => 2
+# 4 => 4
+delayArray = {
+    'C': np.array([[0.0, 0.4, 0.0, 0.1, 0.7],
+                   [0.0, 1.3, 0.0, 1.0, 1.6]]),
+    'F': np.array([[0.0, 0.1, 0.7, 0.4, 0.0],
+                   [0.0, 1.1, 1.6, 1.3, 0.0]]),
+    'G': np.array([[0.0, 0.0, 0.1, 0.4, 0.7],
+                   [0.0, 0.0, 0.1, 0.4, 0.7]])
+
+    # 'C': np.array([[0.0, 0.1, 0.0, 0.4, 0.7, 0.0, 0.0],
+    #                [0.0, 0.1, 0.0, 0.4, 0.7, 0.0, 0.0]]),
+    # 'F': np.array(([[0.1, 0.4, 0.0, 0.0, 0.7, 0.0, 0.0],
+    #                [1.0, 1.3, 0.0, 0.0, 1.6, 0.0, 0.0]])),
+    # 'G': np.array(([[0.0, 0.0, 0.1, 0.4, 0.7, 0.0, 0.0],
+    #                [0.0, 0.0, 0.1, 0.4, 0.7, 0.0, 0.0]]))
+}

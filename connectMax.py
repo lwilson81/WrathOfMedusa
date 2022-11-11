@@ -7,7 +7,7 @@ from pythonosc import osc_server
 import queue
 
 from mappings import getVelocityRange, rotateRandomly
-from robotCommands import moveToStart, playPattern, setup, strum
+from robotCommands import moveToStart, playPattern, setup, startThreads, strummer
 
 # UDP_IP = "127.0.0.1"  # local IP
 UDP_IP = "0.0.0.0"  # hivemind IP
@@ -23,7 +23,7 @@ received = queue.Queue()
 
 
 def add_values_to_queue(name, *args):
-    print("added to queue")
+    # print("added to queue")
     received.put((0, args[0]))  # add degree to Queue as int
     received.put((1, args[1]))  # add velocity to Queue as int
     received.put((2, args[2]))  # add chord to Queue as string
@@ -55,31 +55,26 @@ def playString(chord):
 
 if __name__ == "__main__":
     setup()
-
+    startThreads()
     # client to send to other functions
     client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT)
 
     ############ functions to do things to data ##########################
     while True:
         instruction, value = received.get()  # get instruction and val from Queue
-        print(instruction)
-        degree = 1
+        playPattern(value)
+        # print(instruction)
+        # degree = 1
 
-        if instruction == 0:
-            print("degree:" + str(value))
-            degree = value
+        # if instruction == 0:
+            # print("degree:" + str(value))
+            # degree = value
             # rotateRandomly(value)
 
-        elif instruction == 1:  # velocity instruction is 1
-            print("velocity:" + str(value))
-            print("range:" + str(getVelocityRange(value)))
+        # elif instruction == 1:  # velocity instruction is 1
+            # i = 1
+            # print("velocity:" + str(value))
+            # print("range:" + str(getVelocityRange(value)))
 
-        elif instruction == 2:  # chord instruction is 2
-            playPattern()
-            # print("chord:" + str(value))
-            # if value == "E": #only for 1 robot (E string)
-            #     print("strumming!")
-            #     strum()
-            # else: # dance otherwise
-            #     moveToStart(0)
-            #     rotateRandomly(degree)
+        # if instruction == 2:  # chord instruction is 2
+        #     playPattern(value)
