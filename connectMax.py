@@ -7,7 +7,7 @@ from pythonosc import osc_server
 import queue
 
 from mappings import getVelocityRange, rotateRandomly
-from robotCommands import moveToStart, playPattern, setup, strum
+from robotCommands import moveToStart, setup, strum
 
 # UDP_IP = "127.0.0.1"  # local IP
 UDP_IP = "0.0.0.0"  # hivemind IP
@@ -75,11 +75,11 @@ if __name__ == "__main__":
             print("range:" + str(getVelocityRange(value)))
 
         elif instruction == 2:  # chord instruction is 2
-            playPattern()
-            # print("chord:" + str(value))
-            # if value == "E": #only for 1 robot (E string)
-            #     print("strumming!")
-            #     strum()
-            # else: # dance otherwise
-            #     moveToStart(0)
-            #     rotateRandomly(degree)
+            #playPattern()
+            print("chord:" + str(value))
+            if value == "E": #only for 1 robot (E string)
+                print("strumming!")
+                strum()
+            else: # dance otherwise
+                moveToStart(0)
+                rotateRandomly(degree)
