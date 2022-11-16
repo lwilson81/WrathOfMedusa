@@ -15,9 +15,13 @@ UDP_PORT = 3500  # port to retrieve data from Max
 
 # make Queue -> .get() will call print_data -> .put() will put data into Queue
 global received
+global playMode
+playMode = 0
+# 0 is pose, 1 is play
 
 # 0 is degree, 1 is velocity, 2 is chord name
 received = queue.Queue()
+
 
 ############## functions to be mapped using dispatcher ################
 
@@ -75,11 +79,13 @@ if __name__ == "__main__":
             print("range:" + str(getVelocityRange(value)))
 
         elif instruction == 2:  # chord instruction is 2
-            #playPattern()
+            # playPattern()
             print("chord:" + str(value))
-            if value == "E": #only for 1 robot (E string)
+            if value == "E":  # only for 1 robot (E string)
                 print("strumming!")
-                strum()
-            else: # dance otherwise
+                strum(playMode)
+                playMode = 1
+            else:  # dance otherwise
+                playMode = 0
                 moveToStart(0)
                 rotateRandomly(degree)

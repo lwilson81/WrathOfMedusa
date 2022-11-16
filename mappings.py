@@ -1,6 +1,5 @@
 import random
-from robotCommands import getArms, getIPs, fifth_poly, arms, timeToMove, movebot
-
+from robotCommands import getArms, getIPs, fifth_poly, arms, timeToMove, movebot, poseToPose
 
 def chordDegreeToModifer(chordDegree):
     return (chordDegree - 1) * 0.4
@@ -16,7 +15,9 @@ def rotateRandomly(chordDegree):
     for i in range(7):
         home[i] += modifier * (random.random() - 0.5)
 
-    trajectories = fifth_poly(arms[0].angles, [v*57.296 for v in home], timeToMove)
+    trajectories = poseToPose(arms[0].angles, [v*57.296 for v in home], timeToMove)
+    # print(arms[0].angles, [v*57.296 for v in home],)
+    # print(trajectories)
     movebot(1, trajectories)
 
 

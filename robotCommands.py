@@ -8,14 +8,14 @@ global arms
 global strumD
 global speed
 global notes
-
+#playmode = 1, posemode = 0
 ROBOT = "xArms"
 PORT = 5003
 
 strumD = 30
 # strum speed
 speed = .25
-timeToMove = 1.5
+timeToMove = 10.5
 
 IP0 = [-1, 87.1, -2, 126.5, -strumD / 2, 51.7, -45]
 IP1 = [2.1, 86.3, 0, 127.1, -strumD / 2, 50.1, -45]
@@ -34,7 +34,7 @@ def movebot(numarm, traj):
         start_time = time.time()
         j_angles = traj[i]
         # arms[numarm].set_servo_angle_j(angles=j_angles, is_radian=False)
-        print(j_angles)
+        print('pose', j_angles)
         while track_time < initial_time + 0.004:
             track_time = time.time()
             time.sleep(0.0001)
@@ -45,6 +45,7 @@ def poseToPose(poseI, poseF, t):
     traj = []
     for p in range(len(poseI)):
         traj.append(fifth_poly(poseI[p], poseF[p], t))
+    traj = np.transpose(traj)
     return traj
 
 def fifth_poly(q_i, q_f, t):
@@ -102,13 +103,14 @@ def setup():
 
 
 def moveToStart(index):
-    trajectories = fifth_poly(arms[0].angles, [0.0, 0.0, 0.0, 90, 0.0, 0.0, 0.0], timeToMove)
-    movebot(1, trajectories)
+    trajectories = poseToPose(arms[0].angles, [0.0, 0.0, 0.0, 90, 0.0, 0.0, 0.0], timeToMove)
+    # movebot(1, trajectories)
 
 
 def moveToStrumPos(index):
     trajectories = poseToPose(arms[0].angles, IP[0], timeToMove)
-    movebot(len(arms), trajectories)
+    print(trajectories)
+    # movebot(len(arms), trajectories)
 
 
 def strumbot(numarm, traj):
@@ -121,16 +123,18 @@ def strumbot(numarm, traj):
         start_time = time.time()
         j_angles[4] = traj[i]
         # arms[numarm].set_servo_angle_j(angles=j_angles, is_radian=False)
-        print(j_angles)
+        print('strum', j_angles)
         while track_time < initial_time + 0.004:
             track_time = time.time()
             time.sleep(0.0001)
         initial_time += 0.004
 
 
-def strum():
-    trajectories = poseToPose(arms[0].angles, arms[0], timeToMove)
-    movebot(len(arms), trajectories)
+def strum(playMode):
+    if (not playMode):
+        trajectories = poseToPose(arms[0].angles, IP[0], timeToMove)
+        movebot(len(arms), trajectories)
+
     curr = trajQueue.pop(0)
     strumbot(0, curr)
     trajQueue.append(curr)
