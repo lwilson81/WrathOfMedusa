@@ -1,5 +1,6 @@
 import time
 import numpy as np
+from mappings import rotateRandomly
 from xarm import XArmAPI
 from queue import Queue
 from threading import Thread
@@ -33,7 +34,26 @@ def moveToStrumPos(index):
                                 is_radian=True)
 
 
+def turnOffLive():
+    for i in range(len(arms)):
+        arms[i].set_mode(0)
+        arms[i].set_state(0)
+        moveToStart(i)
+
+
+def turnOnLive():
+    for i in range(len(arms)):
+        moveToStrumPos(i)
+
+    time.sleep(0.4)
+
+    for i in range(len(arms)):
+        arms[i].set_mode(0)
+        arms[i].set_state(0)
+
 # Strum Commands
+
+
 def strumbot(numarm, traj):
     pos = IP[numarm]
     j_angles = pos
@@ -62,38 +82,47 @@ def strummer(queue, robotNum):
 
         strumDirection = i % 2
 
-        while mode == 0:
-            time.sleep(delayArray[variation][strumDirection, robotNum])
-            strumbot(robotNum, strumTrajectories[strumDirection])
+        time.sleep(delayArray[variation][strumDirection, robotNum])
+        strumbot(robotNum, strumTrajectories[strumDirection])
 
-        while mode == 1 and queue.empty():
-            time.sleep(delayArray[variation][strumDirection, robotNum])
-            strumbot(robotNum, strumTrajectories[strumDirection])
+        # while mode == 1 and queue.empty():
+        #     time.sleep(delayArray[variation][strumDirection, robotNum])
+        #     strumbot(robotNum, strumTrajectories[strumDirection])
 
         i += 1
 
 
 def playPattern(chord):
     # TODO: Use dictionary instead
-    if 'C7' in chord:
+    if 'F#' in chord:
+        rotateRandomly(3)
+
+    elif 'C7' in chord:
         print("Special C recognized")
-        mode = 1
+        # mode = 1
         loadQueues([1, 3, 4], 'C')
 
     elif 'C' in chord:
         print("C recognized")
-        mode = 0
+        # mode = 0
         loadQueues([1, 3, 4], 'C')
 
     elif 'F' in chord:
         print("F recognized")
-        mode = 0
+        # mode = 0
         loadQueues([1, 2, 3], 'C')
 
     elif 'G' in chord:
         print("G recognized")
-        mode = 0
+        # mode = 0
         loadQueues([2, 3, 4], 'C')
+
+    elif 'E' in chord:
+        time.sleep(0.4)
+        turnOffLive()
+
+    elif 'B' in chord:
+        turnOnLive()
 
 
 def loadQueues(indexes, input):
@@ -172,11 +201,18 @@ defaultDelayArray = np.array([[0.15, 0.15, 0.15, 0.15, 0.15, 0.0, 0.0], [
 # 4 => 4
 delayArray = {
     'C': np.array([[0.0, 0.4, 0.0, 0.1, 0.7],
-                   [0.0, 1.3, 0.0, 1.0, 1.6]]),
+                   [0.0, 0.4, 0.0, 0.1, 0.7]]),
     'F': np.array([[0.0, 0.1, 0.7, 0.4, 0.0],
-                   [0.0, 1.1, 1.6, 1.3, 0.0]]),
+                   [0.0, 0.1, 0.7, 0.4, 0.0]]),
     'G': np.array([[0.0, 0.0, 0.1, 0.4, 0.7],
                    [0.0, 0.0, 0.1, 0.4, 0.7]])
+
+    # 'C': np.array([[0.0, 0.4, 0.0, 0.1, 0.7],
+    #                [0.0, 1.3, 0.0, 1.0, 1.6]]),
+    # 'F': np.array([[0.0, 0.1, 0.7, 0.4, 0.0],
+    #                [0.0, 1.1, 1.6, 1.3, 0.0]]),
+    # 'G': np.array([[0.0, 0.0, 0.1, 0.4, 0.7],
+    #                [0.0, 0.0, 0.1, 0.4, 0.7]])
 
     # 'C': np.array([[0.0, 0.1, 0.0, 0.4, 0.7, 0.0, 0.0],
     #                [0.0, 0.1, 0.0, 0.4, 0.7, 0.0, 0.0]]),
