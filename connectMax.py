@@ -46,8 +46,8 @@ threading.Thread(target=server, daemon=True).start()
 client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT)
 
 if __name__ == "__main__":
-    # setup()
-    # startThreads()
+    setup()
+    startThreads()
     client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT)
 
     # Default Mode
@@ -81,9 +81,6 @@ if __name__ == "__main__":
             elif mode == Mode.STRUM:
                 print("Not yet implemented")
 
-        # playPattern(manual_value)
-
-        # testDrum()
 
         # KEYBOARD CONTROLS
         # instruction, value = received.get()  # get instruction and val from Queue
