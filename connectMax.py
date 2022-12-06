@@ -61,6 +61,7 @@ if __name__ == "__main__":
         print("Enter a value")
         manual_value = str(input())
         playPattern(manual_value)
+        # testDrum()
 
         # KEYBOARD MODE
         # instruction, value = received.get()  # get instruction and val from Queue
