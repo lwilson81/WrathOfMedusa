@@ -19,11 +19,9 @@ global received
 # 0 is degree, 1 is velocity, 2 is chord name
 received = queue.Queue()
 
+
 ############## functions to be mapped using dispatcher ################
-
-
 def add_values_to_queue(name, *args):
-    # print("added to queue")
     received.put((0, args[0]))  # add degree to Queue as int
     received.put((1, args[1]))  # add velocity to Queue as int
     received.put((2, args[2]))  # add chord to Queue as string
@@ -56,26 +54,31 @@ def playString(chord):
 if __name__ == "__main__":
     setup()
     startThreads()
-    # client to send to other functions
     client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT)
 
-    ############ functions to do things to data ##########################
     while True:
-        instruction, value = received.get()  # get instruction and val from Queue
+        # MANUAL MODE
+        print("Enter a value")
+        manual_value = str(input())
+        playPattern(manual_value)
+
+        # KEYBOARD MODE
+        # instruction, value = received.get()  # get instruction and val from Queue
+        # print(value)
 
         # playPattern(value)
         # print(instruction)
         # degree = 1
 
         # if instruction == 0:
-            # print("degree:" + str(value))
-            # degree = value
-            # rotateRandomly(value)
+        # print("degree:" + str(value))
+        # degree = value
+        # rotateRandomly(value)
 
         # elif instruction == 1:  # velocity instruction is 1
-            # i = 1
-            # print("velocity:" + str(value))
-            # print("range:" + str(getVelocityRange(value)))
+        # i = 1
+        # print("velocity:" + str(value))
+        # print("range:" + str(getVelocityRange(value)))
 
-        if instruction == 2:  # chord instruction is 2
-            playPattern(value)
+        # if instruction == 2:  # chord instruction is 2
+        #     playPattern(value)

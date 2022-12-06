@@ -21,7 +21,7 @@ def setup():
         arms[i].clean_error()
         arms[i].set_mode(0)
         arms[i].set_state(0)
-        arms[i].set_servo_angle(angle=IP[i], wait=True,
+        arms[i].set_servo_angle(angle=IP[i], wait=False,
                                 speed=10, acceleration=0.25, is_radian=False)
         arms[i].set_mode(1)
         arms[i].set_state(0)
@@ -49,7 +49,9 @@ def turnOffLive():
         arms[i].set_mode(0)
         arms[i].set_state(0)
         moveToStart(i)
-    time.sleep(4)
+
+    waitForRobots()
+
 
 
 def turnOnLive():
@@ -57,14 +59,22 @@ def turnOnLive():
         arms[i].set_servo_angle(angle=IP[i], wait=False,
                                 speed=10, acceleration=0.25, is_radian=False)
 
-    time.sleep(1.3)
+    waitForRobots()
 
     for i in range(len(arms)):
-        print("yes")
         arms[i].set_mode(1)
         arms[i].set_state(0)
 
-# Strum Commands
+
+
+
+def waitForRobots():
+    not_safe_to_continue = True
+    while not_safe_to_continue:
+        not_safe_to_continue = False
+        for arm in arms:
+            if arm.get_is_moving():
+                not_safe_to_continue = True
 
 
 def strumbot(numarm, traj):
@@ -98,10 +108,6 @@ def strummer(queue, robotNum):
         time.sleep(delayArray[variation][strumDirection, robotNum])
         strumbot(robotNum, strumTrajectories[strumDirection])
 
-        # while mode == 1 and queue.empty():
-        #     time.sleep(delayArray[variation][strumDirection, robotNum])
-        #     strumbot(robotNum, strumTrajectories[strumDirection])
-
         i += 1
 
 def chordDegreeToModifer(chordDegree):
@@ -130,31 +136,24 @@ def playPattern(chord):
 
     if 'C7' in chord:
         print("Special C recognized")
-        # mode = 1
         loadQueues([1, 3, 4], 'C')
 
     elif 'C' in chord:
         print("C recognized")
-        # mode = 0
         loadQueues([1, 3, 4], 'C')
 
     elif 'F' in chord:
         print("F recognized")
-        # mode = 0
-        loadQueues([1, 2, 3], 'C')
+        loadQueues([1, 2, 3], 'F')
 
     elif 'G' in chord:
         print("G recognized")
-        # mode = 0
-        loadQueues([2, 3, 4], 'C')
+        loadQueues([2, 3, 4], 'G')
 
     elif 'E' in chord:
-        time.sleep(0.4)
         turnOffLive()
 
     elif 'B' in chord:
-        turnOnLive()
-        time.sleep(8)
         turnOnLive()
 
 
@@ -204,11 +203,14 @@ q3 = Queue()
 q4 = Queue()
 qList = [q0, q1, q2, q3, q4]
 
+drumQ = Queue()
+
 xArm0 = Thread(target=strummer, args=(q0, 0,))  # num 2
 xArm1 = Thread(target=strummer, args=(q1, 1,))  # num 4
 xArm2 = Thread(target=strummer, args=(q2, 2,))  # num 1
 xArm3 = Thread(target=strummer, args=(q3, 3,))  # num 3
 xArm4 = Thread(target=strummer, args=(q4, 4,))  # num 5
+xArmDrum = Thread(target=drummer, args=(drumQ, 5))
 
 
 def startThreads():
