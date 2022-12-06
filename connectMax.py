@@ -62,7 +62,8 @@ if __name__ == "__main__":
     ############ functions to do things to data ##########################
     while True:
         instruction, value = received.get()  # get instruction and val from Queue
-        playPattern(value)
+
+        # playPattern(value)
         # print(instruction)
         # degree = 1
 
@@ -76,5 +77,5 @@ if __name__ == "__main__":
             # print("velocity:" + str(value))
             # print("range:" + str(getVelocityRange(value)))
 
-        # if instruction == 2:  # chord instruction is 2
-        #     playPattern(value)
+        if instruction == 2:  # chord instruction is 2
+            playPattern(value)

@@ -1,6 +1,10 @@
 import time
 import numpy as np
-from mappings import rotateRandomly
+import random
+
+# import mappings
+# from mappings import rotateRandomly
+# from mappings import rotateRandomly
 from xarm import XArmAPI
 from queue import Queue
 from threading import Thread
@@ -10,18 +14,24 @@ from trajectoryGen import fifth_poly
 # Prepare Robots
 def setup():
     for i in range(len(arms)):
+        # print("gbdsfd")
         arms[i].set_simulation_robot(on_off=False)
         arms[i].motion_enable(enable=True)
         arms[i].clean_warn()
         arms[i].clean_error()
         arms[i].set_mode(0)
         arms[i].set_state(0)
-        arms[i].set_servo_angle(angle=IP[i], wait=False,
+        arms[i].set_servo_angle(angle=IP[i], wait=True,
                                 speed=10, acceleration=0.25, is_radian=False)
         arms[i].set_mode(1)
         arms[i].set_state(0)
-    print("Ready to start.")
 
+
+    print("Ready to start.")
+    # for i in range(len(arms)):
+    #     arms[i].set_mode(1)
+    #     arms[i].set_state(0)
+#
 
 # Start Positions (not Live mode)
 def moveToStart(index):
@@ -39,16 +49,19 @@ def turnOffLive():
         arms[i].set_mode(0)
         arms[i].set_state(0)
         moveToStart(i)
+    time.sleep(4)
 
 
 def turnOnLive():
     for i in range(len(arms)):
-        moveToStrumPos(i)
+        arms[i].set_servo_angle(angle=IP[i], wait=False,
+                                speed=10, acceleration=0.25, is_radian=False)
 
-    time.sleep(0.4)
+    time.sleep(1.3)
 
     for i in range(len(arms)):
-        arms[i].set_mode(0)
+        print("yes")
+        arms[i].set_mode(1)
         arms[i].set_state(0)
 
 # Strum Commands
@@ -91,13 +104,31 @@ def strummer(queue, robotNum):
 
         i += 1
 
+def chordDegreeToModifer(chordDegree):
+    return (chordDegree - 1) * 0.4
+
+def rotateRandomly(chordDegree):
+    for i in range(len(arms)):
+        # arms[i].set_mode(0)
+        # arms[i].set_state(0)
+        home = [0.0, 0.0, 0.0, 1.57, 0.0, 0.0, 0.0]
+
+        modifier = chordDegreeToModifer(chordDegree)
+
+        # TODO: replace with numpy and broadcasting for optimization
+        for j in range(7):
+            home[j] += modifier * (random.random() - 0.5)
+
+        arms[i].set_servo_angle(angle=home, wait=False, speed=0.4,
+                            acceleration=0.25, is_radian=True)
+
 
 def playPattern(chord):
     # TODO: Use dictionary instead
     if 'F#' in chord:
         rotateRandomly(3)
 
-    elif 'C7' in chord:
+    if 'C7' in chord:
         print("Special C recognized")
         # mode = 1
         loadQueues([1, 3, 4], 'C')
@@ -122,6 +153,8 @@ def playPattern(chord):
         turnOffLive()
 
     elif 'B' in chord:
+        turnOnLive()
+        time.sleep(8)
         turnOnLive()
 
 
