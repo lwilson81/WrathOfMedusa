@@ -6,8 +6,8 @@ from pythonosc import dispatcher
 from pythonosc import osc_server
 import queue
 
-from mappings import getVelocityRange, rotateRandomly
-from robotCommands import moveToStart, playPattern, setup, startThreads, strummer
+from Mode import Mode, getMode
+from robotCommands import moveToStart, playPattern, setup, startThreads, strummer, turnOffLive, turnOnLive, rotateRandomly
 
 # UDP_IP = "127.0.0.1"  # local IP
 UDP_IP = "0.0.0.0"  # hivemind IP
@@ -45,25 +45,47 @@ threading.Thread(target=server, daemon=True).start()
 # client to send to other functions
 client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT)
 
-
-def playString(chord):
-    if chord == "E":
-        print("E")
-
-
 if __name__ == "__main__":
-    setup()
-    startThreads()
+    # setup()
+    # startThreads()
     client = udp_client.SimpleUDPClient(UDP_IP, UDP_PORT)
 
+    # Default Mode
+    mode = Mode.DANCE
+
     while True:
-        # MANUAL MODE
+        # MANUAL CONTROLS
         print("Enter a value")
         manual_value = str(input())
-        playPattern(manual_value)
+
+        if Mode.from_str(manual_value):
+            temp = Mode.from_str(manual_value)
+            if mode != temp:
+                if temp.value % 2 == 0:
+                    turnOffLive()
+                else:
+                    turnOnLive()
+                mode = temp
+                print("New Mode: " + str(mode))
+            else:
+                print("Already in " + str(mode))
+
+        else:
+            # Carry Out Commands
+            if mode == Mode.DANCE:
+                rotateRandomly(int(manual_value))
+
+            elif mode == Mode.ARPEGGIOS:
+                playPattern(manual_value)
+
+            elif mode == Mode.STRUM:
+                print("Not yet implemented")
+
+        # playPattern(manual_value)
+
         # testDrum()
 
-        # KEYBOARD MODE
+        # KEYBOARD CONTROLS
         # instruction, value = received.get()  # get instruction and val from Queue
         # print(value)
 

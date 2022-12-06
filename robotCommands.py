@@ -22,10 +22,12 @@ def setup():
         arms[i].clean_error()
         arms[i].set_mode(0)
         arms[i].set_state(0)
-        arms[i].set_servo_angle(angle=IP[i], wait=False,
-                                speed=10, acceleration=0.25, is_radian=False)
-        arms[i].set_mode(1)
-        arms[i].set_state(0)
+        arms[i].set_servo_angle(angle=[0.0, 0.0, 0.0, 1.57, 0.0, 0, 0.0], wait=False, speed=0.4, acceleration=0.25,
+                                is_radian=True)
+        # arms[i].set_servo_angle(angle=IP[i], wait=False,
+        #                         speed=10, acceleration=0.25, is_radian=False)
+        # arms[i].set_mode(1)
+        # arms[i].set_state(0)
 
     print("Ready to start.")
     # for i in range(len(arms)):
@@ -256,8 +258,6 @@ def chordDegreeToModifer(chordDegree):
 
 def rotateRandomly(chordDegree):
     for i in range(len(arms)):
-        # arms[i].set_mode(0)
-        # arms[i].set_state(0)
         home = [0.0, 0.0, 0.0, 1.57, 0.0, 0.0, 0.0]
 
         modifier = chordDegreeToModifer(chordDegree)
@@ -415,10 +415,3 @@ delayArray = {
     # 'G': np.array(([[0.0, 0.0, 0.1, 0.4, 0.7, 0.0, 0.0],
     #                [0.0, 0.0, 0.1, 0.4, 0.7, 0.0, 0.0]]))
 }
-
-# while True:
-#     print("OK")
-#     drumQ.put(1)
-#     # xArm0 = Thread(target=drummer, args=(q0, 0,))
-#     # xArm0.start()
-#     time.sleep(1)
