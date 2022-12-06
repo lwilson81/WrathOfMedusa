@@ -151,9 +151,6 @@ def rotateRandomly(chordDegree):
 
 def playPattern(chord):
     # TODO: Use dictionary instead
-    if 'F#' in chord:
-        rotateRandomly(3)
-
     if 'C7' in chord:
         print("Special C recognized")
         loadQueues([1, 3, 4], 'C')
@@ -173,11 +170,6 @@ def playPattern(chord):
     elif 'D' in chord:
         drumQ.put(0)
 
-    elif 'E' in chord:
-        turnOffLive()
-
-    elif 'B' in chord:
-        turnOnLive()
 
 
 def loadQueues(indexes, value):
