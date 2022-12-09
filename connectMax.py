@@ -10,7 +10,8 @@ import queue
 import robotCommands
 from Mode import Mode, getMode
 # from lights import switchMode
-from robotCommands import moveToStart, playPattern, playString, setup, startThreads, strummer, turnOffLive, turnOnLive, rotateRandomly
+from robotCommands import moveToStart, playPattern, playString, setup, startThreads, strummer, turnOffLive, turnOnLive, \
+    rotateRandomly
 
 # UDP_IP = "127.0.0.1"  # local IP
 UDP_IP = "0.0.0.0"  # hivemind IP
@@ -30,10 +31,30 @@ def add_values_to_queue(name, *args):
     received.put((2, args[2]))  # add chord to Queue as string
 
 
-################ all function mappings made here #############
-dispatcher = dispatcher.Dispatcher()  # dispatcher to send
-dispatcher.map("/toPython", add_values_to_queue)
+def add_pedal_to_queue(name, *args):
+    received.put((3, args[0]))  # add degree to Queue as int
 
+
+def add_mode_to_queue(name, *args):
+    # print(len(args[0]))
+    received.put((4, args[0]))
+
+
+def add_note_to_queue(name, *args):
+    # print(len(args[0]))
+    received.put((5, args[0]))
+
+
+
+################ all function mappings made here #############
+# dispatcher = dispatcher.Dispatcher()  # dispatcher to send
+
+
+dispatcher = dispatcher.Dispatcher()
+dispatcher.map("/toPython", add_values_to_queue)
+dispatcher.map("/pedalToPython", add_pedal_to_queue)
+dispatcher.map("/modeToPython", add_mode_to_queue)
+dispatcher.map("/noteToPython", add_note_to_queue)
 
 ############# define server to be running in background ####################
 def server():
@@ -57,12 +78,10 @@ if __name__ == "__main__":
     mode = Mode.DANCE
 
     while True:
-        # MANUAL CONTROLS
-        print("Enter a value")
-        manual_value = str(input())
+        instruction, value = received.get()  # get instruction and val from Queue
 
-        if Mode.from_str(manual_value):
-            temp = Mode.from_str(manual_value)
+        if instruction == 4:  # Change Modes
+            temp = Mode.from_str(value)
             if mode != temp:
                 # Send mode
                 if temp.value % 2 == 0:
@@ -79,36 +98,73 @@ if __name__ == "__main__":
             else:
                 print("Already in " + str(mode))
 
-        else:
-            # Carry Out Commands
-            if mode == Mode.DANCE:
-                robotCommands.lightMode = 0
-                rotateRandomly(int(manual_value))
+        if mode == Mode.DANCE and instruction == 0:
+            robotCommands.lightMode = 0
+            rotateRandomly(int(value))
 
-            elif mode == Mode.ARPEGGIOS:
-                playPattern(manual_value)
+        elif mode == Mode.ARPEGGIOS and instruction == 2:
+            playPattern(value)
 
-            elif mode == Mode.STRUM:
-                playString(manual_value)
-                print("Not yet implemented")
+        elif mode == Mode.STRUM and instruction == 5:
+            playString(value)
+
+        if instruction == 3:
+            playPattern('D')
+
+        # # MANUAL CONTROLS
+        # print("Enter a value")
+        # manual_value = str(input())
+        #
+        # if Mode.from_str(manual_value):
+        #     temp = Mode.from_str(manual_value)
+        #     if mode != temp:
+        #         # Send mode
+        #         if temp.value % 2 == 0:
+        #             turnOffLive()
+        #             robotCommands.lightMode = 0
+        #             robotCommands.lightQ.put(6)
+        #             print("changed nto mode  ", robotCommands.lightMode)
+        #         else:
+        #             turnOnLive()
+        #             robotCommands.lightMode = 1
+        #             print("changed nto mode ", robotCommands.lightMode)
+        #         mode = temp
+        #         print("New Mode: " + str(mode))
+        #     else:
+        #         print("Already in " + str(mode))
+        #
+        # else:
+        #     # Carry Out Commands
+        #     if mode == Mode.DANCE:
+        #         robotCommands.lightMode = 0
+        #         rotateRandomly(int(manual_value))
+        #
+        #     elif mode == Mode.ARPEGGIOS:
+        #         playPattern(manual_value)
+        #
+        #     elif mode == Mode.STRUM:
+        #         playString(manual_value)
+        #         print("Not yet implemented")
 
         # KEYBOARD CONTROLS
-        # instruction, value = received.get()  # get instruction and val from Queue
-        # print(value)
+        # print(received.get())
 
-        # playPattern(value)
-        # print(instruction)
-        # degree = 1
-
-        # if instruction == 0:
-        # print("degree:" + str(value))
-        # degree = value
-        # rotateRandomly(value)
-
-        # elif instruction == 1:  # velocity instruction is 1
-        # i = 1
-        # print("velocity:" + str(value))
-        # print("range:" + str(getVelocityRange(value)))
-
-        # if instruction == 2:  # chord instruction is 2
-        #     playPattern(value)
+        # # print(value)
+        #
+        # # playPattern(value)
+        # # print(instruction)
+        # # degree = 1
+        #
+        # # if instruction == 0:
+        # #     print("degree:" + str(value))
+        # #     degree = value
+        # #     rotateRandomly(value)
+        # #
+        # # elif instruction == 1:  # velocity instruction is 1
+        # #     i = 1
+        # #     # print("velocity:" + str(value))
+        # #     # print("range:" + str(getVelocityRange(value)))
+        #
+        # # if instruction == 2:  # chord instruction is 2
+        # #     playPattern(value)
+        #
