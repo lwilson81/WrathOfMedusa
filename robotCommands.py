@@ -2,7 +2,10 @@ import time
 import numpy as np
 import random
 
+import serial
+
 from helpers import chordDegreeToModifier
+# from lights import testList, sendSyncVal, testSend
 from xarm import XArmAPI
 from queue import Queue
 from threading import Thread
@@ -87,11 +90,12 @@ def strummer(queue, robotNum):
 
     while True:
         variation = queue.get()
-        print("Strum Command Recieved for Robot " + str(robotNum))
+        print("Strum Command Received for Robot " + str(robotNum))
 
         strumDirection = i % 2
 
         time.sleep(delayArray[variation][strumDirection, robotNum])
+        lightQ.put(robotNum)
         strumbot(robotNum, strumTrajectories[strumDirection])
 
         i += 1
@@ -151,6 +155,7 @@ def rotateRandomly(chordDegree):
 
 def playPattern(chord):
     # TODO: Use dictionary instead
+    # send arrm numbers
     if 'C7' in chord:
         print("Special C recognized")
         loadQueues([1, 3, 4], 'C')
@@ -170,6 +175,66 @@ def playPattern(chord):
     elif 'D' in chord:
         drumQ.put(0)
 
+
+arduino = serial.Serial('/dev/ttyACM0', 9600)
+
+
+def lightController(temp):
+    while True:
+        # print("still true")
+        if lightMode == 0:  # gradient mode
+            # print("yes")
+            sendSyncVal('gradient')
+            listSend(getAngles(2), randList1) #[2, 3, 4, 5])
+            listSend(getAngles(0), randList2) #[1, 2, 3, 4, 5, 6])
+            listSend(getAngles(3), randList3) #[1, 2, 3, 4, 5, 6])
+            listSend(getAngles(1), randList4) #[1, 2, 3, 4, 5, 6])
+            listSend(getAngles(4), randList5) #[2, 3, 4, 5])
+        if lightMode == 1:  # flash mode
+            # print("no")
+            received = lightQ.get()
+            sendSyncVal('flash')
+            sendSyncVal(str(received + 1))
+
+
+testList = [0, 100, 200, 300, 400, 500]
+
+
+def createRandList(size):
+    a = []
+    for i in range(size):
+        a.append(random.randint(0,6))
+    return a
+
+randList1 = createRandList(4)
+randList2 = createRandList(6)
+randList3 = createRandList(6)
+randList4 = createRandList(6)
+randList5 = createRandList(4)
+
+def getAngles(a):
+    angles = arms[a].angles
+    return angles
+
+def listSend(listToSend, anglesToSend):  # Picks and sends indexes, defined by anglesToSend, of a 6 item list, defined by listToSend
+    sentList = []
+    j = 0
+    for i in anglesToSend:
+        sentList.append((round(listToSend[i] * 2.5 * 256 / 360)) % 256 + (i*20))
+        arduino.write(str(sentList[j]).encode())
+        delay()
+        j += 1
+    # print(sentList)
+
+
+def delay():
+    time.sleep(0.013)
+
+
+def sendSyncVal(value):
+    arduino.write(value.encode())
+    delay()
+    #print("sent " + value)
 
 
 def loadQueues(indexes, value):
@@ -191,9 +256,12 @@ global drums
 global strumD
 global speed
 global notes
+global lightMode
 
 ROBOT = "xArms"
 PORT = 5003
+
+lightMode = 0
 
 strumD = 30
 speed = 0.25
@@ -229,12 +297,18 @@ qList = [q0, q1, q2, q3, q4]
 # Drum Queue
 drumQ = Queue()
 
+# Light Queue
+global lightQ
+lightQ = Queue()
+
 xArm0 = Thread(target=strummer, args=(q0, 0,))  # num 2
 xArm1 = Thread(target=strummer, args=(q1, 1,))  # num 4
 xArm2 = Thread(target=strummer, args=(q2, 2,))  # num 1
 xArm3 = Thread(target=strummer, args=(q3, 3,))  # num 3
 xArm4 = Thread(target=strummer, args=(q4, 4,))  # num 5
 xArmDrum = Thread(target=drummer, args=(drumQ, 5,))
+
+lights = Thread(target=lightController, args=(lightQ,))
 
 
 def startThreads():
@@ -244,6 +318,7 @@ def startThreads():
     xArm3.start()
     xArm4.start()
     xArmDrum.start()
+    lights.start()
 
 
 # Time delay before playing

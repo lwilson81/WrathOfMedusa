@@ -6,7 +6,9 @@ from pythonosc import dispatcher
 from pythonosc import osc_server
 import queue
 
+import robotCommands
 from Mode import Mode, getMode
+# from lights import switchMode
 from robotCommands import moveToStart, playPattern, setup, startThreads, strummer, turnOffLive, turnOnLive, rotateRandomly
 
 # UDP_IP = "127.0.0.1"  # local IP
@@ -61,10 +63,16 @@ if __name__ == "__main__":
         if Mode.from_str(manual_value):
             temp = Mode.from_str(manual_value)
             if mode != temp:
+                # Send mode
                 if temp.value % 2 == 0:
                     turnOffLive()
+                    robotCommands.lightMode = 0
+                    robotCommands.lightQ.put(6)
+                    print("changed nto mode  ", robotCommands.lightMode)
                 else:
                     turnOnLive()
+                    robotCommands.lightMode = 1
+                    print("changed nto mode ", robotCommands.lightMode)
                 mode = temp
                 print("New Mode: " + str(mode))
             else:
@@ -73,6 +81,7 @@ if __name__ == "__main__":
         else:
             # Carry Out Commands
             if mode == Mode.DANCE:
+                robotCommands.lightMode = 0
                 rotateRandomly(int(manual_value))
 
             elif mode == Mode.ARPEGGIOS:
