@@ -1,4 +1,5 @@
 import math
+import time
 
 import numpy as np
 
@@ -20,7 +21,7 @@ def fifth_poly(q_i, q_f, t):
     a5 = 1 / (2 * t ** 5) * (12 * (q_f - q_i) -
                              (6 * dq_f + 6 * dq_i) * t - (ddq_f - ddq_i) * t ** 2)
     traj_pos = a0 + a1 * traj_t + a2 * traj_t ** 2 + a3 * \
-        traj_t ** 3 + a4 * traj_t ** 4 + a5 * traj_t ** 5
+               traj_t ** 3 + a4 * traj_t ** 4 + a5 * traj_t ** 5
     return traj_pos
 
 
@@ -86,3 +87,5 @@ def spline_poly(q_i, q_f, ta, tt, ts):
     full_traj = np.append(half_traj, np.flip(half_traj))
 
     return full_traj
+
+
