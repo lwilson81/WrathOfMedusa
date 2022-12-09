@@ -10,7 +10,7 @@ import queue
 import robotCommands
 from Mode import Mode, getMode
 # from lights import switchMode
-from robotCommands import moveToStart, playPattern, setup, startThreads, strummer, turnOffLive, turnOnLive, rotateRandomly
+from robotCommands import moveToStart, playPattern, playString, setup, startThreads, strummer, turnOffLive, turnOnLive, rotateRandomly
 
 # UDP_IP = "127.0.0.1"  # local IP
 UDP_IP = "0.0.0.0"  # hivemind IP
@@ -89,8 +89,8 @@ if __name__ == "__main__":
                 playPattern(manual_value)
 
             elif mode == Mode.STRUM:
+                playString(manual_value)
                 print("Not yet implemented")
-
 
         # KEYBOARD CONTROLS
         # instruction, value = received.get()  # get instruction and val from Queue

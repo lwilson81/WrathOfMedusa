@@ -75,7 +75,6 @@ def drumRobotToDrumPos():
     armDrum.set_state(0)
 
 
-
 def turnOffLive():
     for i in range(len(arms)):
         arms[i].set_mode(0)
@@ -163,43 +162,133 @@ def drumbot(trajz, trajp, arm):
 def testCircle():
     livetraj(0, 0)
 
+
 def drummer(inq, num):
-    drumQ.put(1)
-    # trajz = spline_poly(325, 35, .08, .08, 0.01)
-    # trajp = spline_poly(-89, -28, .08, .08, 0.01)
-    #
-    # trajz2 = spline_poly(325, 35, .08, .08, .1)
-    # trajp2 = spline_poly(-89, -28, .08, .08, .1)
-    #
-    # trajz3 = spline_poly(325, 35, .08, .08, .15)
-    # trajp3 = spline_poly(-89, -28, .08, .08, .15)
-    #
+    # drumQ.put(1)
+    trajz = spline_poly(325, 35, .08, .08, 0.01)
+    trajp = spline_poly(-89, -28, .08, .08, 0.01)
+
+    trajz2 = spline_poly(325, 35, .08, .08, .1)
+    trajp2 = spline_poly(-89, -28, .08, .08, .1)
+
+    trajz3 = spline_poly(325, 35, .08, .08, .15)
+    trajp3 = spline_poly(-89, -28, .08, .08, .15)
+
+    i = 0
+    while True:
+        i += 1
+        play = inq.get()
+
+        # end of run indef
+        if i % 3 == 1:
+            drumbot(trajz, trajp, num)
+
+        elif i % 3 == 2:
+            drumbot(trajz2, trajp2, num)
+
+        elif i % 3 == 0:
+            drumbot(trajz3, trajp3, num)
+
+
+# def livetraj(inq, robot):
+    # waitForDrummer()
+
+    # for arm in drums:
+    #     arm.set_mode(0)
+    #     arm.set_state(0)
+
+    # waitForDrummer()
+
+    # tf = 2
+    # # q i
+    # # 0.2 * np.floor(xi / 0.2)
+    # # range is 200 to -200
+    # t0 = 0
+    # t = t0
+    # q_i = 0
+    # q_dot_i = 0
+    # q_dot_f = 0
+    # q_dotdot_i = 0
+    # q_dotdot_f = 0
+    # t_array = np.arange(0, tf, 0.006)
+    # p = 0
+    # v = 0
+    # a = 0
+    # dancet = 0
+
     # i = 0
-    # while True:
+    # # or dancet != 0
+    # print("okee")
+    # while (i <= len(t_array) or dancet != 0):
+    #     print("dokee")
+    #     start_time = time.time()
+    #     # if inq.empty() == False:
+    #     #     goal = inq.get()
+    #     # print("switch bot", robot)
+    #     q_i = p
+    #     q_dot_i = v
+    #     q_dotdot_i = 0
+    #     # q_f = goal
+    #     i = 0
+    #     # IF YOU WANT TO ADD SPEED CHANGES THEN SWAP THE ABOVE LINES WITH THE BELOW LINES
+    #     # # q should input an array of [*absolute* position of joint, time(in seconds) to reach there]
+    #     # q_f = goal[0]
+    #     # tf = goal[1]
+    #     # t_array = np.arange(0, tf, 0.006)
+    #     # print("switch")
+    #     if i >= len(t_array):
+    #         t = tf
+    #         # if at end, append more time
+    #         # t_array = np.append(t_array, tf+0.006)
+    #         # print(t_array)
+    #         dancet += 0.006
+    #     else:
+    #         t = t_array[i]
+    #         dancet = t
+
+    #     # amplitude returns sin wave to oscillate over
+
+    #     # 48.0
+    #     # 0.0
+    #     # -22.0
+    #     xwave = -np.cos(3 * dancet) * 48
+    #     ywave = -np.sin(3 * dancet) * 50
+    #     zwave = np.cos(3 * dancet) * 22
+    #     # xwave = 0
+    #     # ywave = 0
+    #     # zwave = 0
+
+    #     # mvpose = [362 + xwave, 67.2 + ywave, 102 + zwave, -111.2, 0, -90.2]
+    #     mvpose = [425 + xwave, 17.6 + ywave, 102 + zwave, -111.2, 0, -90.2]
+
+    #     arms[robot].set_servo_cartesian(mvpose, speed=100, mvacc=2000)
+
+    #     # print(mvpose[2])
+    #     tts = time.time() - start_time
+    #     sleep = 0.004 - tts
+
+    #     if tts > 0.004:
+    #         sleep = 0
+
+    #     # print(tts)
+    #     time.sleep(sleep)
     #     i += 1
-    #     play = inq.get()
-    #
-    #     # end of run indef
-    #     if i % 3 == 1:
-    #         drumbot(trajz, trajp, num)
-    #
-    #     elif i % 3 == 2:
-    #         drumbot(trajz2, trajp2, num)
-    #
-    #     elif i % 3 == 0:
-    #         drumbot(trajz3, trajp3, num)
 
 
 def livetraj(inq, robot):
-    waitForDrummer()
+    # DRUM CODE
+    # trajz = spline_poly(325, 35, .08, .08, 0.01)
+    # trajp = spline_poly(-89, -28, .08, .08, 0.01)
 
-    for arm in drums:
-        arm.set_mode(0)
-        arm.set_state(0)
+    # trajz2 = spline_poly(325, 35, .08, .08, .1)
+    # trajp2 = spline_poly(-89, -28, .08, .08, .1)
 
-    waitForDrummer()
+    # trajz3 = spline_poly(325, 35, .08, .08, .15)
+    # trajp3 = spline_poly(-89, -28, .08, .08, .15)
 
+    # i = 0
 
+    # CIRCLE CODE
     tf = 2
     # q i
     # 0.2 * np.floor(xi / 0.2)
@@ -217,171 +306,81 @@ def livetraj(inq, robot):
     a = 0
     dancet = 0
 
-    i = 0
-    # or dancet != 0
-    print("okee")
-    while (i <= len(t_array) or dancet != 0):
-        print("dokee")
-        start_time = time.time()
-        # if inq.empty() == False:
-        #     goal = inq.get()
-        # print("switch bot", robot)
-        q_i = p
-        q_dot_i = v
-        q_dotdot_i = 0
-        # q_f = goal
-        i = 0
-        # IF YOU WANT TO ADD SPEED CHANGES THEN SWAP THE ABOVE LINES WITH THE BELOW LINES
-        # # q should input an array of [*absolute* position of joint, time(in seconds) to reach there]
-        # q_f = goal[0]
-        # tf = goal[1]
-        # t_array = np.arange(0, tf, 0.006)
-        # print("switch")
-        if i >= len(t_array):
-            t = tf
-            # if at end, append more time
-            # t_array = np.append(t_array, tf+0.006)
-            # print(t_array)
-            dancet += 0.006
+    while True:
+        goal = inq.get()
+        if goal == 1:
+            i += 1
+
+            print("herear")
+            # end of run indef
+            if i % 3 == 1:
+                drumbot(trajz, trajp, robot)
+
+            elif i % 3 == 2:
+                drumbot(trajz2, trajp2, robot)
+
+            elif i % 3 == 0:
+                drumbot(trajz3, trajp3, robot)
+
         else:
-            t = t_array[i]
-            dancet = t
+            # print("moving", robot)
+            q_i = p
+            q_dot_i = 0
+            q_dotdot_i = 0
+            q_f = goal
+            i = 0
+            # or dancet != 0
+            while drumQ.empty() and i <= len(t_array) or dancet != 0:
+                start_time = time.time()
+                # if inq.empty() == False:
+                #     goal = inq.get()
+                # print("switch bot", robot)
+                q_i = p
+                q_dot_i = v
+                q_dotdot_i = 0
+                q_f = goal
+                i = 0
+                # IF YOU WANT TO ADD SPEED CHANGES THEN SWAP THE ABOVE LINES WITH THE BELOW LINES
+                # # q should input an array of [*absolute* position of joint, time(in seconds) to reach there]
+                # q_f = goal[0]
+                # tf = goal[1]
+                # t_array = np.arange(0, tf, 0.006)
+                # print("switch")
+                if i >= len(t_array):
+                    t = tf
+                    # if at end, append more time
+                    # t_array = np.append(t_array, tf+0.006)
+                    # print(t_array)
+                    dancet += 0.006
+                else:
+                    t = t_array[i]
+                    dancet = t
 
-        # amplitude returns sin wave to oscillate over
+                # amplitude returns sin wave to oscillate over
 
-        # 48.0
-        # 0.0
-        # -22.0
-        xwave = -np.cos(3 * dancet) * 48
-        ywave = -np.sin(3 * dancet) * 50
-        zwave = np.cos(3 * dancet) * 22
-        # xwave = 0
-        # ywave = 0
-        # zwave = 0
+                xwave = np.cos(3 * dancet) * 48
+                ywave = np.sin(3 * dancet) * 50
+                zwave = -np.cos(3 * dancet) * 22
+                # xwave = 0
+                # ywave = 0
+                # zwave = 0
 
-        # mvpose = [362 + xwave, 67.2 + ywave, 102 + zwave, -111.2, 0, -90.2]
-        mvpose = [425 + xwave, 17.6 + ywave, 102 + zwave, -111.2, 0, -90.2]
+                mvpose = [425 + xwave, 17.6 + ywave,
+                          102 + zwave, -111.2, 0, -90.2]
 
-        arms[robot].set_servo_cartesian(mvpose, speed=100, mvacc=2000)
+                armDrum.set_servo_cartesian(mvpose, speed=100, mvacc=2000)
+                # print(mvpose[2])
+                tts = time.time() - start_time
+                sleep = 0.004 - tts
 
-        # print(mvpose[2])
-        tts = time.time() - start_time
-        sleep = 0.004 - tts
+                if tts > 0.004:
+                    sleep = 0
 
-        if tts > 0.004:
-            sleep = 0
-
-        # print(tts)
-        time.sleep(sleep)
-        i += 1
-
-
-# def livetraj(inq, robot):
-#     # DRUM CODE
-#     trajz = spline_poly(325, 35, .08, .08, 0.01)
-#     trajp = spline_poly(-89, -28, .08, .08, 0.01)
-#
-#     trajz2 = spline_poly(325, 35, .08, .08, .1)
-#     trajp2 = spline_poly(-89, -28, .08, .08, .1)
-#
-#     trajz3 = spline_poly(325, 35, .08, .08, .15)
-#     trajp3 = spline_poly(-89, -28, .08, .08, .15)
-#
-#     i = 0
-#
-#     # CIRCLE CODE
-#     tf = 2
-#     # q i
-#     # 0.2 * np.floor(xi / 0.2)
-#     # range is 200 to -200
-#     t0 = 0
-#     t = t0
-#     q_i = 0
-#     q_dot_i = 0
-#     q_dot_f = 0
-#     q_dotdot_i = 0
-#     q_dotdot_f = 0
-#     t_array = np.arange(0, tf, 0.006)
-#     p = 0
-#     v = 0
-#     a = 0
-#     dancet = 0
-#
-#
-#     while True:
-#         goal = inq.get()
-#         if goal == 1:
-#             i += 1
-#
-#             print("herear")
-#             # end of run indef
-#             if i % 3 == 1:
-#                 drumbot(trajz, trajp, robot)
-#
-#             elif i % 3 == 2:
-#                 drumbot(trajz2, trajp2, robot)
-#
-#             elif i % 3 == 0:
-#                 drumbot(trajz3, trajp3, robot)
-#
-#         else:
-#             # print("moving", robot)
-#             q_i = p
-#             q_dot_i = 0
-#             q_dotdot_i = 0
-#             q_f = goal
-#             i = 0
-#             # or dancet != 0
-#             while drumQ.empty() and i <= len(t_array) or dancet != 0:
-#                 start_time = time.time()
-#                 # if inq.empty() == False:
-#                 #     goal = inq.get()
-#                 # print("switch bot", robot)
-#                 q_i = p
-#                 q_dot_i = v
-#                 q_dotdot_i = 0
-#                 q_f = goal
-#                 i = 0
-#                 # IF YOU WANT TO ADD SPEED CHANGES THEN SWAP THE ABOVE LINES WITH THE BELOW LINES
-#                 # # q should input an array of [*absolute* position of joint, time(in seconds) to reach there]
-#                 # q_f = goal[0]
-#                 # tf = goal[1]
-#                 # t_array = np.arange(0, tf, 0.006)
-#                 # print("switch")
-#                 if i >= len(t_array):
-#                     t = tf
-#                     # if at end, append more time
-#                     # t_array = np.append(t_array, tf+0.006)
-#                     # print(t_array)
-#                     dancet += 0.006
-#                 else:
-#                     t = t_array[i]
-#                     dancet = t
-#
-#                 # amplitude returns sin wave to oscillate over
-#
-#                 xwave = np.cos(3 * dancet) * 48
-#                 ywave = np.sin(3 * dancet) * 50
-#                 zwave = -np.cos(3 * dancet) * 22
-#                 # xwave = 0
-#                 # ywave = 0
-#                 # zwave = 0
-#
-#                 mvpose = [425 + xwave, 17.6 + ywave, 102 + zwave, -111.2, 0, -90.2]
-#
-#                 armDrum.set_servo_cartesian(mvpose, speed=100, mvacc=2000)
-#                 # print(mvpose[2])
-#                 tts = time.time() - start_time
-#                 sleep = 0.004 - tts
-#
-#                 if tts > 0.004:
-#                     sleep = 0
-#
-#                 # print(tts)
-#                 time.sleep(sleep)
-#                 i += 1
-#                 # if t == 1:
-#                 # print(t, p, v, a)
+                # print(tts)
+                time.sleep(sleep)
+                i += 1
+                # if t == 1:
+                # print(t, p, v, a)
 
 
 def rotateRandomly(chordDegree):
@@ -396,6 +395,19 @@ def rotateRandomly(chordDegree):
 
         arms[i].set_servo_angle(angle=home, wait=False, speed=0.4,
                                 acceleration=0.25, is_radian=True)
+
+
+def playString(chord):
+    if '1' in chord:
+        loadQueues([0], 'X')
+    elif '2' in chord:
+        loadQueues([1], 'X')
+    elif '3' in chord:
+        loadQueues([2], 'X')
+    elif '4' in chord:
+        loadQueues([3], 'X')
+    elif '5' in chord:
+        loadQueues([4], 'X')
 
 
 def playPattern(chord):
@@ -472,7 +484,8 @@ def listSend(listToSend,
     sentList = []
     j = 0
     for i in anglesToSend:
-        sentList.append((round(listToSend[i] * 2.5 * 256 / 360)) % 256 + (i * 20))
+        sentList.append(
+            (round(listToSend[i] * 2.5 * 256 / 360)) % 256 + (i * 20))
         arduino.write(str(sentList[j]).encode())
         delay()
         j += 1
@@ -590,7 +603,10 @@ delayArray = {
     'F': np.array([[0.0, 0.1, 0.7, 0.4, 0.0],
                    [0.0, 0.1, 0.7, 0.4, 0.0]]),
     'G': np.array([[0.0, 0.0, 0.1, 0.4, 0.7],
-                   [0.0, 0.0, 0.1, 0.4, 0.7]])
+                   [0.0, 0.0, 0.1, 0.4, 0.7]]),
+    'X': np.array([[0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0]])
+
 
     # 'C': np.array([[0.0, 0.4, 0.0, 0.1, 0.7],
     #                [0.0, 1.3, 0.0, 1.0, 1.6]]),
